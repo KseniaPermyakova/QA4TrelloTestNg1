@@ -26,9 +26,10 @@ public class CurrentBoardPageTests extends TestBase {
         waitUntilElementIsClickable(By.id("login-submit"), 30);
 
         driver.findElement(By.id("login-submit")).click();
-        waitUntilElementIsClickable(By.id("login-submit"), 30);
+        waitUntilElementIsVisible(By.id("password"), 30);
 
         driver.findElement(By.id("password")).sendKeys("ghjkG562");
+        waitUntilElementIsClickable(By.id("login-submit"), 30);
         driver.findElement(By.id("login-submit")).click();
         waitUntilElementIsClickable(By.xpath("//button[@data-test-id='header-boards-menu-button']"), 30);
     }
@@ -74,23 +75,30 @@ public class CurrentBoardPageTests extends TestBase {
     @Test
     public void addFirstCardInNewList() throws InterruptedException {
         //----Open 'QA 4 Auto' board
+        waitUntilElementIsVisible(By.xpath("//div[@title='QA4 Auto']/.."), 20);
         driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
-        Thread.sleep(15000);
+//        Thread.sleep(15000);
         //-----Add a new list------
+        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
         driver.findElement(By.cssSelector(".placeholder")).click();
-        Thread.sleep(3000);
-        driver.findElement(By.cssSelector(".list-name-input"))
-                .sendKeys("New List");
+        waitUntilElementIsVisible(By.cssSelector(".list-name-input"), 30);
+//        Thread.sleep(3000);
+        driver.findElement(By.cssSelector(".list-name-input")).sendKeys("New List");
+        waitUntilElementIsClickable(By.xpath("//input[@type='submit']"), 30);
         driver.findElement(By.xpath("//input[@type='submit']")).click();
-        Thread.sleep(3000);
+//        Thread.sleep(3000);
         //----Add a first card for any new list
+        waitUntilElementIsClickable(By.xpath("//span[@class='js-add-a-card']"), 30);
         driver.findElements(By.xpath("//span[@class='js-add-a-card']")).get(0).click();
-        Thread.sleep(3000);
+        waitUntilElementIsVisible(By.xpath("//textarea[@placeholder='Enter a title for this card…']"), 30);
+//        Thread.sleep(3000);
         driver.findElement(By
                 .xpath("//textarea[@placeholder='Enter a title for this card…']")).sendKeys("text");
+        waitUntilElementIsClickable(By.xpath("//input[@class='primary confirm mod-compact js-add-card']"), 30);
         driver.findElement(By
                 .xpath("//input[@class='primary confirm mod-compact js-add-card']")).click();
-        Thread.sleep(5000);
+        waitUntilElementIsClickable(By.xpath("//input[@class='primary confirm mod-compact js-add-card']"), 30);
+//        Thread.sleep(5000);
 
     }
 
@@ -113,6 +121,10 @@ public class CurrentBoardPageTests extends TestBase {
     @Test
     public void deleteList() throws InterruptedException {
 
+        waitUntilElementIsVisible(By.xpath("//div[@title='QA4 Auto']/.."), 20);
+        driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
+        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
+//        Thread.sleep(15000);
         int quantityListAtFirst = driver.findElements(By.xpath("//div[@class='list-header-target js-editing-target']")).size();
         if (quantityListAtFirst == 0) {
             driver.findElement(By.cssSelector(".placeholder")).click();
@@ -120,13 +132,14 @@ public class CurrentBoardPageTests extends TestBase {
 
             driver.findElement(By.cssSelector(".list-name-input")).sendKeys("New list");
             driver.findElement(By.xpath("//input[@type='submit']")).click();
-
+            quantityListAtFirst++;
         }
 
         driver.findElement(By.xpath("//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']")).click();
         waitUntilElementIsClickable(By.xpath("//a[@class='js-close-list']"), 30);
 
         driver.findElement(By.xpath("//a[@class='js-close-list']")).click();
+        waitUntilElementIsClickable(By.xpath("//input[@class='list-name-input']"), 30);
 
         int quantityListAtTheEnd = driver.findElements(By.xpath("//div[@class='list-header-target js-editing-target']")).size();
 

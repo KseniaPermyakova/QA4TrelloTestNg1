@@ -15,8 +15,7 @@ public class LoginPageTests extends TestBase {
     public void loginToTrelloPositive() throws InterruptedException {
         //----Login to trello----
 
-        WebElement loginIcon = driver.findElement(By
-                .xpath("//a[@class='btn btn-sm btn-link text-white']"));
+        WebElement loginIcon = driver.findElement(By.xpath("//a[@class='btn btn-sm btn-link text-white']"));
         //Thread.sleep(5000);
         loginIcon.click();
         waitUntilElementIsClickable(By.id("login"),30);
@@ -29,8 +28,10 @@ public class LoginPageTests extends TestBase {
         waitUntilElementIsClickable(By.id("login-submit"),30);
         driver.findElement(By.id("login-submit")).click();
         //Thread.sleep(3000);
-        waitUntilElementIsClickable(By.id("login-submit"),30);
+        waitUntilElementIsVisible(By.id("password"), 30);
+
         driver.findElement(By.id("password")).sendKeys("ghjkG562");
+        waitUntilElementIsClickable(By.id("login-submit"),30);
         driver.findElement(By.id("login-submit")).click();
         //Thread.sleep(30000);
         waitUntilElementIsClickable(By
@@ -61,10 +62,10 @@ public class LoginPageTests extends TestBase {
 //        Thread.sleep(5000);
 
         driver.findElement(By.id("login-submit")).click();
-        waitUntilElementIsClickable(By.id("login-submit"), 30);
+        waitUntilElementIsVisible(By.id("password"), 30);
 //        Thread.sleep(3000);
-
         driver.findElement(By.id("password")).sendKeys("hgnbjbkbk");
+        waitUntilElementIsClickable(By.id("login-submit"), 30);
         driver.findElement(By.id("login-submit")).click();
         waitUntilElementIsVisible(By.xpath("//div[@id='login-error']/span"), 10);
 //        Thread.sleep(5000);
@@ -93,12 +94,12 @@ public class LoginPageTests extends TestBase {
         passwordField.click();
         passwordField.clear();
         passwordField.sendKeys("jgnnbjbhg");
-
+        waitUntilElementIsClickable(By.id("login"), 3);
         driver.findElement(By.id("login")).click();
-//        waitUntilElementIsVisible(By.xpath("//p[@class='error-message']"), 30);
-        Thread.sleep(5000);
+        waitUntilElementIsVisible(By.xpath("//p[@class='error-message']"), 30);
+//        Thread.sleep(5000);
 
-        System.out.println(driver.findElement(By.xpath("//p[@class='error-message']")).getText());
+//        System.out.println(driver.findElement(By.xpath("//p[@class='error-message']")).getText());
 
         Assert.assertTrue(driver.findElement(By.xpath("//p[@class='error-message']"))
                 .getText().contains("There isn't an account for this email"));
