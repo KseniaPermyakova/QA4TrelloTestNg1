@@ -6,6 +6,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.List;
 import java.util.Random;
 
 public class CurrentBoardPageTests extends TestBase {
@@ -49,13 +50,13 @@ public class CurrentBoardPageTests extends TestBase {
 //        Thread.sleep(5000);
         String str = genRandomString(7);
         //String str = "New List";
-        System.out.println("Name button - " + nameAddListButton);
+//        System.out.println("Name button - " + nameAddListButton);
         int quantityListAtFirst = driver.findElements(By.xpath("//h2")).size();
         if(nameAddListButton.equals("Add another list")){
             boolean exitName = false;
-            System.out.println("Size-" + driver.findElements(By.xpath("//h2/../textarea")).size());
+//            System.out.println("Size-" + driver.findElements(By.xpath("//h2/../textarea")).size());
             for(WebElement element: driver.findElements(By.xpath("//h2/../textarea"))){
-                System.out.println("Name - " + element.getText());
+//                System.out.println("Name - " + element.getText());
                 if(element.getText().equals(str)) exitName = true;
             }
             if(exitName) str = stringWithRandomNumber(1000,str);
@@ -65,40 +66,63 @@ public class CurrentBoardPageTests extends TestBase {
                 .sendKeys(str);
         driver.findElement(By.xpath("//input[@type='submit']")).click();
         //System.out.println("name of the list - " + genRandomString(5));
-        Thread.sleep(5000);
+//        Thread.sleep(5000);
+        waitUntilElementIsClickable(By.cssSelector("a.js-cancel-edit"), 10);
+        driver.findElement(By.cssSelector("a.js-cancel-edit")).click();
+        waitUntilElementIsVisible(By.cssSelector("span.placeholder"), 10);
         int quantityListAtTheEnd = driver.findElements(By.xpath("//h2")).size();
 
         Assert.assertEquals(quantityListAtFirst+1, quantityListAtTheEnd);
+        Assert.assertEquals(driver.findElement(By.cssSelector("span.placeholder")).getText(), "Add another list");
 
     }
 
     @Test
     public void addFirstCardInNewList() throws InterruptedException {
+
         //----Open 'QA 4 Auto' board
-        waitUntilElementIsVisible(By.xpath("//div[@title='QA4 Auto']/.."), 20);
         driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
-//        Thread.sleep(15000);
+
+        waitUntilElementIsClickable(By.cssSelector(".placeholder"),30);
+        //--------Get qantity of 'Add another card' buttons at the beginning----
+        int quantityAddAnotherButtonBeg = driver.findElements(By.xpath("//span[@class= 'js-add-another-card']")).size();
+
         //-----Add a new list------
-        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
         driver.findElement(By.cssSelector(".placeholder")).click();
-        waitUntilElementIsVisible(By.cssSelector(".list-name-input"), 30);
-//        Thread.sleep(3000);
-        driver.findElement(By.cssSelector(".list-name-input")).sendKeys("New List");
-        waitUntilElementIsClickable(By.xpath("//input[@type='submit']"), 30);
+
+        waitUntilElementIsVisible(By.cssSelector(".list-name-input"),10);
+        driver.findElement(By.cssSelector(".list-name-input"))
+                .sendKeys("New List");
+        waitUntilElementIsClickable(By.xpath("//input[@type='submit']"),10);
         driver.findElement(By.xpath("//input[@type='submit']")).click();
-//        Thread.sleep(3000);
+
+        waitUntilElementIsClickable(By.cssSelector("a.js-cancel-edit"),10);
+        driver.findElement(By.cssSelector("a.js-cancel-edit")).click();
+
+        waitUntilElementIsVisible(By.cssSelector(".placeholder"),10);
+        //----- Get the last 'Add card' button----
+        waitUntilAllElementsAreVisible(By.xpath("//span[@class = 'js-add-a-card']"),15);
+        List<WebElement> listAddCardButtons = driver.findElements(By.xpath("//span[@class = 'js-add-a-card']"));
+        int sizeLstAddCardButtons = listAddCardButtons.size();
+        WebElement lastAddCardButton = listAddCardButtons.get(sizeLstAddCardButtons-1);
         //----Add a first card for any new list
-        waitUntilElementIsClickable(By.xpath("//span[@class='js-add-a-card']"), 30);
-        driver.findElements(By.xpath("//span[@class='js-add-a-card']")).get(0).click();
-        waitUntilElementIsVisible(By.xpath("//textarea[@placeholder='Enter a title for this card…']"), 30);
-//        Thread.sleep(3000);
+        lastAddCardButton.click();
+
+        waitUntilElementIsClickable(By
+                .xpath("//input[@class='primary confirm mod-compact js-add-card']"),10);
         driver.findElement(By
                 .xpath("//textarea[@placeholder='Enter a title for this card…']")).sendKeys("text");
-        waitUntilElementIsClickable(By.xpath("//input[@class='primary confirm mod-compact js-add-card']"), 30);
         driver.findElement(By
                 .xpath("//input[@class='primary confirm mod-compact js-add-card']")).click();
-        waitUntilElementIsClickable(By.xpath("//input[@class='primary confirm mod-compact js-add-card']"), 30);
-//        Thread.sleep(5000);
+
+        waitUntilElementIsClickable(By.cssSelector("a.js-cancel"),10);
+        driver.findElement(By.cssSelector("a.js-cancel")).click();
+
+        //--------Get qantity of 'Add another card' buttons at the end----
+        waitUntilAllElementsAreVisible(By.xpath("//span[@class= 'js-add-another-card']"),10);
+        int quantityAddAnotherButtonEnd = driver.findElements(By.xpath("//span[@class= 'js-add-another-card']")).size();
+
+        Assert.assertEquals(quantityAddAnotherButtonBeg+1, quantityAddAnotherButtonEnd);
 
     }
 
