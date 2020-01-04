@@ -69,7 +69,7 @@ public class LoginPageTests extends TestBase {
 //        System.out.println("Error message: " + driver.findElement(By.id("login-error")).getText());
 
         Assert.assertTrue(driver.findElement(By.xpath("//div[@id='login-error']/span"))
-                .getText().contains("Incorrect email address and / or password."));
+                .getText().contains("Incorrect email address and / or password."), "Error message is not correct");
 
     }
 

@@ -36,7 +36,7 @@ public class CurrentBoardPageTests extends TestBase {
     }
 
     @Test
-    public void createNewList() throws InterruptedException {
+    public void createNewList() {
         //----Open 'QA 4 Auto' board
         waitUntilElementIsVisible(By.xpath("//div[@title='QA4 Auto']/.."), 20);
         driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
@@ -78,7 +78,7 @@ public class CurrentBoardPageTests extends TestBase {
     }
 
     @Test
-    public void addFirstCardInNewList() throws InterruptedException {
+    public void addFirstCardInNewList() {
 
         //----Open 'QA 4 Auto' board
         driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
@@ -118,7 +118,7 @@ public class CurrentBoardPageTests extends TestBase {
         waitUntilElementIsClickable(By.cssSelector("a.js-cancel"),10);
         driver.findElement(By.cssSelector("a.js-cancel")).click();
 
-        //--------Get qantity of 'Add another card' buttons at the end----
+        //--------Get quantity of 'Add another card' buttons at the end----
         waitUntilAllElementsAreVisible(By.xpath("//span[@class= 'js-add-another-card']"),10);
         int quantityAddAnotherButtonEnd = driver.findElements(By.xpath("//span[@class= 'js-add-another-card']")).size();
 
@@ -143,7 +143,7 @@ public class CurrentBoardPageTests extends TestBase {
     }
 
     @Test
-    public void deleteList() throws InterruptedException {
+    public void deleteList() {
 
         waitUntilElementIsVisible(By.xpath("//div[@title='QA4 Auto']/.."), 20);
         driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
@@ -168,6 +168,63 @@ public class CurrentBoardPageTests extends TestBase {
         int quantityListAtTheEnd = driver.findElements(By.xpath("//div[@class='list-header-target js-editing-target']")).size();
 
         Assert.assertEquals(quantityListAtFirst - 1, quantityListAtTheEnd);
+    }
+
+    @Test
+    public void createCopyOfList() {
+        //----Open 'QA 4 Auto' board-----------------
+        waitUntilElementIsVisible(By.xpath("//div[@title='QA4 Auto']/.."), 20);
+        driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
+        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
+
+        //----------Get quantity of the lists at the start-----------
+        int quantityListAtFirst = driver.findElements(By.xpath("//h2")).size();
+
+        //--------Add a new list-----------------------
+        if (quantityListAtFirst == 0) {
+            driver.findElement(By.cssSelector(".placeholder")).click();
+            waitUntilElementIsClickable(By.xpath("//input[@type='submit']"), 30);
+
+            driver.findElement(By.cssSelector(".list-name-input")).sendKeys("New list");
+            driver.findElement(By.xpath("//input[@type='submit']")).click();
+            waitUntilElementIsClickable(By.xpath("//a[@class='icon-lg icon-close dark-hover js-cancel-edit']"), 30);
+            driver.findElement(By.xpath("//a[@class='icon-lg icon-close dark-hover js-cancel-edit']")).click();
+            quantityListAtFirst++;
+        }
+        //----------Get quantity of the lists at the start with name as list1-----------
+        String nameOfList1 = driver.findElements(By.xpath("//h2/../textarea")).get(0).getText();
+        int countAtFirst = 0;
+        for(WebElement element: driver.findElements(By.xpath("//h2/../textarea"))) {
+            if(element.getText().equals(nameOfList1)) {
+                countAtFirst++;
+            }
+        }
+
+        //-----Create copy of the list-----------------
+        waitUntilElementIsClickable(By.xpath("//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']"), 30);
+        driver.findElements(By.xpath("//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']"))
+                .get(0).click();
+
+        waitUntilElementIsClickable(By.xpath("//a[@class='js-copy-list']"), 20);
+        driver.findElement(By.xpath("//a[@class='js-copy-list']")).click();
+
+        waitUntilElementIsClickable(By.cssSelector(".js-submit"), 30);
+        driver.findElement(By.cssSelector(".js-submit")).click();
+        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
+
+        //----------Get quantity of the lists at the end-----------
+        int quantityListAtTheEnd = driver.findElements(By.xpath("//h2")).size();
+
+        //----------Get quantity of the lists at the end with name as list1-----------
+        int countAtTheEnd = 0;
+        for(WebElement element: driver.findElements(By.xpath("//h2/../textarea"))) {
+            if(element.getText().equals(nameOfList1)) {
+                countAtTheEnd++;
+            }
+        }
+
+        Assert.assertEquals(quantityListAtFirst+1, quantityListAtTheEnd);
+        Assert.assertEquals(countAtFirst+1, countAtTheEnd, "copying the first list is not successful");
     }
 
 }
