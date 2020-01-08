@@ -70,11 +70,15 @@ public class LoginPageHelper extends PageBase {
         passwordField.sendKeys(password);
     }
 
+    public void clickLogin() {
+        waitUntilElementIsClickable(By.id("login"), 3);
+        driver.findElement(By.id("login")).click();
+    }
+
     public void loginToTrello(String login, String password) {
         this.enterLogin(login);
         this.enterPassword(password);
-        waitUntilElementIsClickable(By.id("login"), 3);
-        driver.findElement(By.id("login")).click();
+        this.clickLogin();
     }
 
     public void waitLoginError() {
