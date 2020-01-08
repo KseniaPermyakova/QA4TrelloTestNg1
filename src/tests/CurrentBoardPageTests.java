@@ -1,5 +1,8 @@
 package tests;
 
+import helpers.BoardsPageHelper;
+import helpers.HomePageHelper;
+import helpers.LoginPageHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
@@ -10,29 +13,19 @@ import java.util.List;
 import java.util.Random;
 
 public class CurrentBoardPageTests extends TestBase {
+    HomePageHelper homePage;
+    LoginPageHelper loginPage;
+    BoardsPageHelper boardsPage;
 
     @BeforeMethod
     public void initTest() {
-//        ----Login to trello----
-        WebElement loginIcon = driver.findElement(By.xpath("//a[@class='btn btn-sm btn-link text-white']"));
-        loginIcon.click();
-        waitUntilElementIsClickable(By.id("login"), 30);
-
-        WebElement userField = driver.findElement(By.id("user"));
-        userField.click();
-        userField.clear();
-        userField.sendKeys("ksyshenjkateplova@gmail.com");
-
-        driver.findElement(By.id("login")).click();
-        waitUntilElementIsClickable(By.id("login-submit"), 30);
-
-        driver.findElement(By.id("login-submit")).click();
-        waitUntilElementIsVisible(By.id("password"), 30);
-
-        driver.findElement(By.id("password")).sendKeys("ghjkG562");
-        waitUntilElementIsClickable(By.id("login-submit"), 30);
-        driver.findElement(By.id("login-submit")).click();
-        waitUntilElementIsClickable(By.xpath("//button[@data-test-id='header-boards-menu-button']"), 30);
+        homePage = new HomePageHelper(driver);
+        loginPage = new LoginPageHelper(driver);
+        boardsPage = new BoardsPageHelper(driver);
+        homePage.openLoginPage();
+        loginPage.waitUntilPageIsLoaded();
+        loginPage.loginToTrelloAsAtlassian(LOGIN, PASSWORD);
+        boardsPage.waitUntilPageIsLoaded();
     }
 
     @Test

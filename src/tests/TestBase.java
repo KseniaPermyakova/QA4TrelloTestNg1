@@ -1,5 +1,6 @@
 package tests;
 
+import helpers.HomePageHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -9,16 +10,19 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 public class TestBase {
+    public static final String LOGIN = "ksyshenjkateplova@gmail.com";
+    public static final String PASSWORD = "ghjkG562";
     WebDriver driver;
+    HomePageHelper homePage;
 
     @BeforeMethod
-    public void setUp() throws InterruptedException {
+    public void setUp() {
         driver = new ChromeDriver();
+        homePage = new HomePageHelper(driver);
         //===========Enter to Trello====
         driver.manage().window().fullscreen();
         driver.get("https://trello.com/");
-        //Thread.sleep(5000);
-        waitUntilElementIsClickable(By.xpath("//a[@class='btn btn-sm btn-link text-white']"), 40);
+        homePage.waitUntilPageIsLoaded();
     }
 
     @AfterMethod
