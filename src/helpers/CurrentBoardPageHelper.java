@@ -15,6 +15,9 @@ public class CurrentBoardPageHelper extends PageBase {
     @FindBy (xpath = "//span[@dir='auto']")
     WebElement fieldNameList;
 
+    @FindBy (xpath = "//h2")
+    List<WebElement> listHeaders;
+
     public CurrentBoardPageHelper(WebDriver driver) {
         super(driver);
     }
@@ -33,8 +36,7 @@ public class CurrentBoardPageHelper extends PageBase {
     }
 
     public void createNewList(String name) {
-        WebElement addListButton = driver.findElement(By.cssSelector(".placeholder"));
-        addListButton.click();
+        addButton.click();
         waitUntilElementIsVisible(By.cssSelector(".list-name-input"), 10);
         driver.findElement(By.cssSelector(".list-name-input"))
                 .sendKeys(name);
@@ -44,7 +46,6 @@ public class CurrentBoardPageHelper extends PageBase {
     }
 
     public String getAddButtonName() {
- //       WebElement addListButton = driver.findElement(By.cssSelector(".placeholder"));
         return addButton.getText();
     }
 
@@ -59,7 +60,7 @@ public class CurrentBoardPageHelper extends PageBase {
     }
 
     public int getQuantityLists() {
-        return driver.findElements(By.xpath("//h2")).size();
+        return listHeaders.size();
     }
 
     public void openMenuListActions() {
@@ -97,7 +98,7 @@ public class CurrentBoardPageHelper extends PageBase {
 
         waitUntilElementIsClickable(By.cssSelector(".js-submit"), 30);
         driver.findElement(By.cssSelector(".js-submit")).click();
-        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
+        waitUntilElementIsClickable(addButton, 30);
     }
 
     public void clickLastAddCardButton() {
