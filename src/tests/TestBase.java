@@ -4,6 +4,7 @@ import helpers.HomePageHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
@@ -18,7 +19,7 @@ public class TestBase {
     @BeforeMethod
     public void setUp() {
         driver = new ChromeDriver();
-        homePage = new HomePageHelper(driver);
+        homePage = PageFactory.initElements(driver, HomePageHelper.class);
         //===========Enter to Trello====
         driver.manage().window().fullscreen();
         driver.get("https://trello.com/");

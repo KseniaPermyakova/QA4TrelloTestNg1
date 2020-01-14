@@ -3,32 +3,41 @@ package helpers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class LoginPageHelper extends PageBase {
+    @FindBy (id = "user")
+    WebElement userField;
+
+    @FindBy (id = "login")
+    WebElement loginButton;
+
+    @FindBy (xpath = "//button[@id='login-submit']//span[contains(text(),'Log in')]")
+    WebElement theSecondLoginButton;
+
+    @FindBy (xpath = "//button[@id='login-submit']//span[contains(text(),'Continue')]")
+    WebElement continueButton;
 
     public LoginPageHelper(WebDriver driver) {
         super(driver);
     }
 
     public void waitUntilPageIsLoaded() {
-        waitUntilElementIsClickable(By.id("login"),30);
+        waitUntilElementIsClickable(loginButton,30);
     }
 
     public void enterAtlLogin(String login) {
-        WebElement userField = driver.findElement(By.id("user"));
-        userField.click();
-        userField.clear();
-        userField.sendKeys(login);
+        enterValueToTheField(userField, login);
     }
 
     public void clickLoginAtWithAtlassian() {
-        waitUntilElementIsClickable(By.id("login"), 10);
+        waitUntilElementIsClickable(loginButton, 10);
         driver.findElement(By.id("login")).click();
     }
 
     public void clickContinueButton() {
-        waitUntilElementIsClickable(By.id("login-submit"),30);
-        driver.findElement(By.id("login-submit")).click();
+        waitUntilElementIsClickable(continueButton,30);
+        continueButton.click();
     }
 
     public void loginToTrelloAsAtlassian(String login, String password) {
@@ -42,10 +51,8 @@ public class LoginPageHelper extends PageBase {
         waitUntilElementIsClickable(By.id("password"), 30);
         driver.findElement(By.id("password")).sendKeys(password);
         waitUntilElementIsClickable(By.id("login-submit"),30);
-        driver.findElement(By.id("login-submit")).click();
+        theSecondLoginButton.click();
     }
-
-
 
     public void waitPasswordError() {
         waitUntilElementIsVisible(By.xpath("//div[@id='login-error']/span"), 10);

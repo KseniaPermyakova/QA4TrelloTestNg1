@@ -2,8 +2,11 @@ package helpers;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.Random;
 
 public abstract class PageBase {
     WebDriver driver;
@@ -37,6 +40,36 @@ public abstract class PageBase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static String genRandomString(int num){
+        String str = "";
+        int number;
+        Random gen = new Random();
+        for(int i=0; i<num; i++){
+            number = '!' + gen.nextInt('z' - '!' +1);
+            str = str + (char)number;
+        }
+        return str;
+    }
+
+    public static String stringWithRandomNumber(int num,String str){
+        Random gen = new Random();
+        return str + gen.nextInt(num);
+    }
+
+    public void waitUntilElementIsClickable(WebElement element, int time) {
+        try {
+            new WebDriverWait(driver, time).until(ExpectedConditions.elementToBeClickable(element));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void enterValueToTheField(WebElement field, String value) {
+        field.click();
+        field.clear();
+        field.sendKeys(value);
     }
 
 }

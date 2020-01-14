@@ -1,27 +1,28 @@
 package tests;
 
 import helpers.BoardsPageHelper;
+import helpers.CurrentBoardPageHelper;
 import helpers.HomePageHelper;
 import helpers.LoginPageHelper;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.List;
-import java.util.Random;
 
 public class CurrentBoardPageTests extends TestBase {
     HomePageHelper homePage;
     LoginPageHelper loginPage;
     BoardsPageHelper boardsPage;
+    CurrentBoardPageHelper qa4AutoBoard;
 
     @BeforeMethod
     public void initTest() {
-        homePage = new HomePageHelper(driver);
-        loginPage = new LoginPageHelper(driver);
+        homePage = PageFactory.initElements(driver, HomePageHelper.class);
+        loginPage = PageFactory.initElements(driver, LoginPageHelper.class);
         boardsPage = new BoardsPageHelper(driver);
+        qa4AutoBoard = PageFactory.initElements(driver, CurrentBoardPageHelper.class);
+        qa4AutoBoard.setName("QA4 Auto");
+
         homePage.openLoginPage();
         loginPage.waitUntilPageIsLoaded();
         loginPage.loginToTrelloAsAtlassian(LOGIN, PASSWORD);
@@ -29,192 +30,81 @@ public class CurrentBoardPageTests extends TestBase {
     }
 
     @Test
-    public void createNewList() {
-        //----Open 'QA 4 Auto' board
-        waitUntilElementIsVisible(By.xpath("//div[@title='QA4 Auto']/.."), 20);
-        driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
-        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
-//        Thread.sleep(15000);
-        //-----Add a new list------
-        WebElement addListButton = driver.findElement(By.cssSelector(".placeholder"));
-        String nameAddListButton = addListButton.getText();
-        addListButton.click();
-        waitUntilElementIsVisible(By.cssSelector(".list-name-input"), 10);
-//        Thread.sleep(5000);
-        String str = genRandomString(7);
-        //String str = "New List";
-//        System.out.println("Name button - " + nameAddListButton);
-        int quantityListAtFirst = driver.findElements(By.xpath("//h2")).size();
-        if(nameAddListButton.equals("Add another list")){
-            boolean exitName = false;
-//            System.out.println("Size-" + driver.findElements(By.xpath("//h2/../textarea")).size());
-            for(WebElement element: driver.findElements(By.xpath("//h2/../textarea"))){
-//                System.out.println("Name - " + element.getText());
-                if(element.getText().equals(str)) exitName = true;
-            }
-            if(exitName) str = stringWithRandomNumber(1000,str);
-        }
+    public void verifyIfLoadedBoardIsCorrect() {
 
-        driver.findElement(By.cssSelector(".list-name-input"))
-                .sendKeys(str);
-        driver.findElement(By.xpath("//input[@type='submit']")).click();
-        //System.out.println("name of the list - " + genRandomString(5));
-//        Thread.sleep(5000);
-        waitUntilElementIsClickable(By.cssSelector("a.js-cancel-edit"), 10);
-        driver.findElement(By.cssSelector("a.js-cancel-edit")).click();
-        waitUntilElementIsVisible(By.cssSelector("span.placeholder"), 10);
-        int quantityListAtTheEnd = driver.findElements(By.xpath("//h2")).size();
+        boardsPage.openBoard("QA4 Auto");
+        qa4AutoBoard.waitUntilPageIsLoaded();
+        Assert.assertTrue(qa4AutoBoard.titleVerification());
+    }
+
+    @Test
+    public void createNewList() {
+
+        boardsPage.openBoard("QA4 Auto");
+        qa4AutoBoard.waitUntilPageIsLoaded();
+        String nameList = "New List";
+        if (qa4AutoBoard.getAddButtonName().equals("Add another list")) {
+            nameList = qa4AutoBoard.genRandomString(7);
+            if (qa4AutoBoard.existList(nameList)) {
+                nameList = qa4AutoBoard.stringWithRandomNumber(1000, nameList);
+            }
+        }
+        int quantityListAtFirst = qa4AutoBoard.getQuantityLists();
+        qa4AutoBoard.createNewList(nameList);
+        int quantityListAtTheEnd = qa4AutoBoard.getQuantityLists();
 
         Assert.assertEquals(quantityListAtFirst+1, quantityListAtTheEnd);
-        Assert.assertEquals(driver.findElement(By.cssSelector("span.placeholder")).getText(), "Add another list");
-
+        Assert.assertEquals(qa4AutoBoard.getAddButtonName(), "Add another list");
     }
 
     @Test
     public void addFirstCardInNewList() {
 
-        //----Open 'QA 4 Auto' board
-        driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
-
-        waitUntilElementIsClickable(By.cssSelector(".placeholder"),30);
-        //--------Get qantity of 'Add another card' buttons at the beginning----
-        int quantityAddAnotherButtonBeg = driver.findElements(By.xpath("//span[@class= 'js-add-another-card']")).size();
-
-        //-----Add a new list------
-        driver.findElement(By.cssSelector(".placeholder")).click();
-
-        waitUntilElementIsVisible(By.cssSelector(".list-name-input"),10);
-        driver.findElement(By.cssSelector(".list-name-input"))
-                .sendKeys("New List");
-        waitUntilElementIsClickable(By.xpath("//input[@type='submit']"),10);
-        driver.findElement(By.xpath("//input[@type='submit']")).click();
-
-        waitUntilElementIsClickable(By.cssSelector("a.js-cancel-edit"),10);
-        driver.findElement(By.cssSelector("a.js-cancel-edit")).click();
-
-        waitUntilElementIsVisible(By.cssSelector(".placeholder"),10);
-        //----- Get the last 'Add card' button----
-        waitUntilAllElementsAreVisible(By.xpath("//span[@class = 'js-add-a-card']"),15);
-        List<WebElement> listAddCardButtons = driver.findElements(By.xpath("//span[@class = 'js-add-a-card']"));
-        int sizeLstAddCardButtons = listAddCardButtons.size();
-        WebElement lastAddCardButton = listAddCardButtons.get(sizeLstAddCardButtons-1);
-        //----Add a first card for any new list
-        lastAddCardButton.click();
-
-        waitUntilElementIsClickable(By
-                .xpath("//input[@class='primary confirm mod-compact js-add-card']"),10);
-        driver.findElement(By
-                .xpath("//textarea[@placeholder='Enter a title for this card…']")).sendKeys("text");
-        driver.findElement(By
-                .xpath("//input[@class='primary confirm mod-compact js-add-card']")).click();
-
-        waitUntilElementIsClickable(By.cssSelector("a.js-cancel"),10);
-        driver.findElement(By.cssSelector("a.js-cancel")).click();
-
-        //--------Get quantity of 'Add another card' buttons at the end----
-        waitUntilAllElementsAreVisible(By.xpath("//span[@class= 'js-add-another-card']"),10);
-        int quantityAddAnotherButtonEnd = driver.findElements(By.xpath("//span[@class= 'js-add-another-card']")).size();
+        boardsPage.openBoard("QA4 Auto");
+        qa4AutoBoard.waitUntilPageIsLoaded();
+        int quantityAddAnotherButtonBeg = qa4AutoBoard.getQuantityAddAnotherCardButtons();
+        qa4AutoBoard.createNewList("New List");
+        qa4AutoBoard.clickLastAddCardButton();
+        qa4AutoBoard.addFirstCard();
+        int quantityAddAnotherButtonEnd = qa4AutoBoard.getQuantityAddAnotherCardButtons();
 
         Assert.assertEquals(quantityAddAnotherButtonBeg+1, quantityAddAnotherButtonEnd);
-
-    }
-
-    public static String genRandomString(int num){
-        String str = "";
-        int number;
-        Random gen = new Random();
-        for(int i=0; i<num; i++){
-            number = '!' + gen.nextInt('z' - '!' +1);
-            str = str + (char)number;
-        }
-        return str;
-    }
-
-    public static String stringWithRandomNumber(int num,String str){
-        Random gen = new Random();
-        return str + gen.nextInt(num);
     }
 
     @Test
     public void deleteList() {
 
-        waitUntilElementIsVisible(By.xpath("//div[@title='QA4 Auto']/.."), 20);
-        driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
-        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
-//        Thread.sleep(15000);
-        int quantityListAtFirst = driver.findElements(By.xpath("//div[@class='list-header-target js-editing-target']")).size();
+        boardsPage.openBoard("QA4 Auto");
+        qa4AutoBoard.waitUntilPageIsLoaded();
+        int quantityListAtFirst = qa4AutoBoard.getQuantityLists();
         if (quantityListAtFirst == 0) {
-            driver.findElement(By.cssSelector(".placeholder")).click();
-            waitUntilElementIsClickable(By.xpath("//input[@type='submit']"), 30);
-
-            driver.findElement(By.cssSelector(".list-name-input")).sendKeys("New list");
-            driver.findElement(By.xpath("//input[@type='submit']")).click();
+            String nameList = qa4AutoBoard.genRandomString(6);
+            qa4AutoBoard.createNewList(nameList);
             quantityListAtFirst++;
         }
-
-        driver.findElement(By.xpath("//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']")).click();
-        waitUntilElementIsClickable(By.xpath("//a[@class='js-close-list']"), 30);
-
-        driver.findElement(By.xpath("//a[@class='js-close-list']")).click();
-        waitUntilElementIsClickable(By.xpath("//input[@class='list-name-input']"), 30);
-
-        int quantityListAtTheEnd = driver.findElements(By.xpath("//div[@class='list-header-target js-editing-target']")).size();
+        qa4AutoBoard.openMenuListActions();
+        qa4AutoBoard.deleteList();
+        int quantityListAtTheEnd = qa4AutoBoard.getQuantityLists();
 
         Assert.assertEquals(quantityListAtFirst - 1, quantityListAtTheEnd);
     }
 
     @Test
     public void createCopyOfList() {
-        //----Open 'QA 4 Auto' board-----------------
-        waitUntilElementIsVisible(By.xpath("//div[@title='QA4 Auto']/.."), 20);
-        driver.findElement(By.xpath("//div[@title='QA4 Auto']/..")).click();
-        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
 
-        //----------Get quantity of the lists at the start-----------
-        int quantityListAtFirst = driver.findElements(By.xpath("//h2")).size();
-
-        //--------Add a new list-----------------------
+        boardsPage.openBoard("QA4 Auto");
+        qa4AutoBoard.waitUntilPageIsLoaded();
+        int quantityListAtFirst = qa4AutoBoard.getQuantityLists();
         if (quantityListAtFirst == 0) {
-            driver.findElement(By.cssSelector(".placeholder")).click();
-            waitUntilElementIsClickable(By.xpath("//input[@type='submit']"), 30);
-
-            driver.findElement(By.cssSelector(".list-name-input")).sendKeys("New list");
-            driver.findElement(By.xpath("//input[@type='submit']")).click();
-            waitUntilElementIsClickable(By.xpath("//a[@class='icon-lg icon-close dark-hover js-cancel-edit']"), 30);
-            driver.findElement(By.xpath("//a[@class='icon-lg icon-close dark-hover js-cancel-edit']")).click();
+            String nameList = qa4AutoBoard.genRandomString(6);
+            qa4AutoBoard.createNewList(nameList);
             quantityListAtFirst++;
         }
-        //----------Get quantity of the lists at the start with name as list1-----------
-        String nameOfList1 = driver.findElements(By.xpath("//h2/../textarea")).get(0).getText();
-        int countAtFirst = 0;
-        for(WebElement element: driver.findElements(By.xpath("//h2/../textarea"))) {
-            if(element.getText().equals(nameOfList1)) {
-                countAtFirst++;
-            }
-        }
-
-        //-----Create copy of the list-----------------
-        waitUntilElementIsClickable(By.xpath("//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']"), 30);
-        driver.findElements(By.xpath("//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']"))
-                .get(0).click();
-
-        waitUntilElementIsClickable(By.xpath("//a[@class='js-copy-list']"), 20);
-        driver.findElement(By.xpath("//a[@class='js-copy-list']")).click();
-
-        waitUntilElementIsClickable(By.cssSelector(".js-submit"), 30);
-        driver.findElement(By.cssSelector(".js-submit")).click();
-        waitUntilElementIsClickable(By.cssSelector(".placeholder"), 30);
-
-        //----------Get quantity of the lists at the end-----------
-        int quantityListAtTheEnd = driver.findElements(By.xpath("//h2")).size();
-
-        //----------Get quantity of the lists at the end with name as list1-----------
-        int countAtTheEnd = 0;
-        for(WebElement element: driver.findElements(By.xpath("//h2/../textarea"))) {
-            if(element.getText().equals(nameOfList1)) {
-                countAtTheEnd++;
-            }
-        }
+        String nameOfList1 = qa4AutoBoard.getNameOfList1();
+        int countAtFirst = qa4AutoBoard.getQuantityListsWithNameOfList1(nameOfList1);
+        qa4AutoBoard.createCopyOfTheList();
+        int quantityListAtTheEnd = qa4AutoBoard.getQuantityLists();
+        int countAtTheEnd = qa4AutoBoard.getQuantityListsWithNameOfList1(nameOfList1);
 
         Assert.assertEquals(quantityListAtFirst+1, quantityListAtTheEnd);
         Assert.assertEquals(countAtFirst+1, countAtTheEnd, "copying the first list is not successful");

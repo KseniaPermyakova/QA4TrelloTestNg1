@@ -24,4 +24,9 @@ public class BoardsPageHelper extends PageBase {
         return driver.findElement(By.xpath("//h3[@class='boards-page-board-section-header-name']"))
                 .getText().equals("Personal Boards");
     }
+
+    public void openBoard(String boardName) {
+        waitUntilElementIsVisible(By.xpath("//div[@title='" + boardName +"']/.."), 20);
+        driver.findElement(By.xpath("//div[@title='" + boardName +"']/..")).click();
+    }
 }
