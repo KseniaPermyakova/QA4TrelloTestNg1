@@ -18,6 +18,9 @@ public class LoginPageHelper extends PageBase {
     @FindBy (xpath = "//button[@id='login-submit']//span[contains(text(),'Continue')]")
     WebElement continueButton;
 
+    @FindBy (id = "password")
+    WebElement passwordField;
+
     public LoginPageHelper(WebDriver driver) {
         super(driver);
     }
@@ -32,7 +35,7 @@ public class LoginPageHelper extends PageBase {
 
     public void clickLoginAtWithAtlassian() {
         waitUntilElementIsClickable(loginButton, 10);
-        driver.findElement(By.id("login")).click();
+        loginButton.click();
     }
 
     public void clickContinueButton() {
@@ -48,9 +51,9 @@ public class LoginPageHelper extends PageBase {
     }
 
     public void enterAtlPasswordAndLogin(String password) {
-        waitUntilElementIsClickable(By.id("password"), 30);
-        driver.findElement(By.id("password")).sendKeys(password);
-        waitUntilElementIsClickable(By.id("login-submit"),30);
+        waitUntilElementIsClickable(passwordField, 30);
+        passwordField.sendKeys(password);
+        waitUntilElementIsClickable(theSecondLoginButton,30);
         theSecondLoginButton.click();
     }
 
@@ -64,22 +67,20 @@ public class LoginPageHelper extends PageBase {
     }
 
     public void enterLogin(String login) {
-        WebElement userField = driver.findElement(By.id("user"));
         userField.click();
         userField.clear();
         userField.sendKeys(login);
     }
 
     public void enterPassword(String password) {
-        WebElement passwordField = driver.findElement(By.xpath("//input[@id='password']"));
         passwordField.click();
         passwordField.clear();
         passwordField.sendKeys(password);
     }
 
     public void clickLogin() {
-        waitUntilElementIsClickable(By.id("login"), 3);
-        driver.findElement(By.id("login")).click();
+        waitUntilElementIsClickable(loginButton, 3);
+        loginButton.click();
     }
 
     public void loginToTrello(String login, String password) {

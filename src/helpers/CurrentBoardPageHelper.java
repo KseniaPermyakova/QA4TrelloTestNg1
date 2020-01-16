@@ -18,6 +18,21 @@ public class CurrentBoardPageHelper extends PageBase {
     @FindBy (xpath = "//h2")
     List<WebElement> listHeaders;
 
+    @FindBy (css = ".list-name-input")
+    WebElement listInputNameField;
+
+    @FindBy (xpath = "//a[@class='js-close-list']")
+    WebElement archiveButton;
+
+    @FindBy (xpath = "//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']")
+    List<WebElement> menuListButtons;
+
+    @FindBy (xpath = "//a[@class='js-copy-list']")
+    WebElement copyListButton;
+
+    @FindBy (css = ".js-submit")
+    WebElement createCopyListButton;
+
     public CurrentBoardPageHelper(WebDriver driver) {
         super(driver);
     }
@@ -37,9 +52,8 @@ public class CurrentBoardPageHelper extends PageBase {
 
     public void createNewList(String name) {
         addButton.click();
-        waitUntilElementIsVisible(By.cssSelector(".list-name-input"), 10);
-        driver.findElement(By.cssSelector(".list-name-input"))
-                .sendKeys(name);
+        waitUntilElementIsClickable(listInputNameField, 30);
+        listInputNameField.sendKeys(name);
         driver.findElement(By.xpath("//input[@type='submit']")).click();
         waitUntilElementIsClickable(By.cssSelector("a.js-cancel-edit"), 10);
         driver.findElement(By.cssSelector("a.js-cancel-edit")).click();
@@ -69,9 +83,9 @@ public class CurrentBoardPageHelper extends PageBase {
     }
 
     public void deleteList() {
-        waitUntilElementIsClickable(By.xpath("//a[@class='js-close-list']"), 30);
-        driver.findElement(By.xpath("//a[@class='js-close-list']")).click();
-        waitUntilElementIsClickable(By.xpath("//span[@class='placeholder']"), 30);
+        waitUntilElementIsClickable(archiveButton, 30);
+        archiveButton.click();
+        waitUntilElementIsClickable(addButton, 30);
     }
 
     public int getQuantityListsWithNameOfList1(String name) {
@@ -89,15 +103,12 @@ public class CurrentBoardPageHelper extends PageBase {
     }
 
     public void createCopyOfTheList() {
-        waitUntilElementIsClickable(By.xpath("//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']"), 30);
-        driver.findElements(By.xpath("//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']"))
-                .get(0).click();
-
-        waitUntilElementIsClickable(By.xpath("//a[@class='js-copy-list']"), 20);
-        driver.findElement(By.xpath("//a[@class='js-copy-list']")).click();
-
-        waitUntilElementIsClickable(By.cssSelector(".js-submit"), 30);
-        driver.findElement(By.cssSelector(".js-submit")).click();
+        waitUntilElementIsClickable(menuListButtons.get(0), 30);
+        menuListButtons.get(0).click();
+        waitUntilElementIsClickable(copyListButton, 20);
+        copyListButton.click();
+        waitUntilElementIsClickable(createCopyListButton, 30);
+        createCopyListButton.click();
         waitUntilElementIsClickable(addButton, 30);
     }
 
