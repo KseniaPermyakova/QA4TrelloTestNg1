@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
 import java.util.Random;
 
 public abstract class PageBase {
@@ -61,6 +62,15 @@ public abstract class PageBase {
     public void waitUntilElementIsClickable(WebElement element, int time) {
         try {
             new WebDriverWait(driver, time).until(ExpectedConditions.elementToBeClickable(element));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void waitUntilAllElementsAreVisible(List<WebElement> elements, int time) {
+        try {
+            new WebDriverWait(driver,time).until(ExpectedConditions
+                    .visibilityOfAllElements(elements));
         } catch (Exception e) {
             e.printStackTrace();
         }

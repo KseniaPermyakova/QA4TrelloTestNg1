@@ -33,6 +33,27 @@ public class CurrentBoardPageHelper extends PageBase {
     @FindBy (css = ".js-submit")
     WebElement createCopyListButton;
 
+    @FindBy (xpath = "//span[@class = 'js-add-a-card']")
+    List<WebElement> addCardButtons;
+
+    @FindBy (xpath = "//h2/../textarea")
+    List<WebElement> nameOfLists;
+
+    @FindBy (xpath = "//input[@type='submit']")
+    WebElement addListButton;
+
+    @FindBy (css = "a.js-cancel-edit")
+    WebElement cancelButton;
+
+    @FindBy (xpath = "//input[@class='primary confirm mod-compact js-add-card']")
+    WebElement addCard;
+
+    @FindBy (xpath = "//textarea[@placeholder='Enter a title for this card…']")
+    WebElement nameCardField;
+
+    @FindBy (css = "a.js-cancel")
+    WebElement cancelAddCardButton;
+
     public CurrentBoardPageHelper(WebDriver driver) {
         super(driver);
     }
@@ -54,9 +75,9 @@ public class CurrentBoardPageHelper extends PageBase {
         addButton.click();
         waitUntilElementIsClickable(listInputNameField, 30);
         listInputNameField.sendKeys(name);
-        driver.findElement(By.xpath("//input[@type='submit']")).click();
-        waitUntilElementIsClickable(By.cssSelector("a.js-cancel-edit"), 10);
-        driver.findElement(By.cssSelector("a.js-cancel-edit")).click();
+        addListButton.click();
+        waitUntilElementIsClickable(cancelButton, 10);
+        cancelButton.click();
     }
 
     public String getAddButtonName() {
@@ -65,7 +86,7 @@ public class CurrentBoardPageHelper extends PageBase {
 
     public boolean existList(String nameList) {
         boolean exitName = false;
-        for (WebElement element : driver.findElements(By.xpath("//h2/../textarea"))) {
+        for (WebElement element : nameOfLists) {
             if (element.getText().equals(nameList)) {
                 exitName = true;
             }
@@ -78,8 +99,7 @@ public class CurrentBoardPageHelper extends PageBase {
     }
 
     public void openMenuListActions() {
-        WebElement listActions = driver.findElement(By.xpath("//a[@class='list-header-extras-menu dark-hover js-open-list-menu icon-sm icon-overflow-menu-horizontal']"));
-        listActions.click();
+        menuListButtons.get(0).click();
     }
 
     public void deleteList() {
@@ -90,7 +110,7 @@ public class CurrentBoardPageHelper extends PageBase {
 
     public int getQuantityListsWithNameOfList1(String name) {
         int countAtFirst = 0;
-        for(WebElement element: driver.findElements(By.xpath("//h2/../textarea"))) {
+        for(WebElement element: nameOfLists) {
             if(element.getText().equals(name)) {
                 countAtFirst++;
             }
@@ -99,7 +119,7 @@ public class CurrentBoardPageHelper extends PageBase {
     }
 
     public String getNameOfList1() {
-        return driver.findElements(By.xpath("//h2/../textarea")).get(0).getText();
+        return nameOfLists.get(0).getText();
     }
 
     public void createCopyOfTheList() {
@@ -113,23 +133,17 @@ public class CurrentBoardPageHelper extends PageBase {
     }
 
     public void clickLastAddCardButton() {
-        waitUntilAllElementsAreVisible(By.xpath("//span[@class = 'js-add-a-card']"),15);
-        List<WebElement> listAddCardButtons = driver.findElements(By.xpath("//span[@class = 'js-add-a-card']"));
-        int sizeListAddCardButtons = listAddCardButtons.size();
-        WebElement lastAddCardButton = listAddCardButtons.get(sizeListAddCardButtons-1);
-        lastAddCardButton.click();
+        waitUntilAllElementsAreVisible(addCardButtons,15);
+        int sizeListAddCardButtons = addCardButtons.size();
+        addCardButtons.get(sizeListAddCardButtons-1).click();
     }
 
     public void addFirstCard() {
-        waitUntilElementIsClickable(By
-                .xpath("//input[@class='primary confirm mod-compact js-add-card']"),10);
-        driver.findElement(By
-                .xpath("//textarea[@placeholder='Enter a title for this card…']")).sendKeys("text");
-        driver.findElement(By
-                .xpath("//input[@class='primary confirm mod-compact js-add-card']")).click();
-
-        waitUntilElementIsClickable(By.cssSelector("a.js-cancel"),10);
-        driver.findElement(By.cssSelector("a.js-cancel")).click();
+        waitUntilElementIsClickable(addCard, 10);
+        nameCardField.sendKeys("text");
+        addCard.click();
+        waitUntilElementIsClickable(cancelAddCardButton, 10);
+        cancelAddCardButton.click();
     }
 
     public int getQuantityAddAnotherCardButtons() {
