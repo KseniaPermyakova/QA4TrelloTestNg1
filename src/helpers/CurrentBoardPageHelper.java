@@ -54,6 +54,9 @@ public class CurrentBoardPageHelper extends PageBase {
     @FindBy (css = "a.js-cancel")
     WebElement cancelAddCardButton;
 
+    @FindBy (xpath = "//span[@class= 'js-add-another-card']")
+    List<WebElement> addAnotherCardButtons;
+
     public CurrentBoardPageHelper(WebDriver driver) {
         super(driver);
     }
@@ -147,7 +150,7 @@ public class CurrentBoardPageHelper extends PageBase {
     }
 
     public int getQuantityAddAnotherCardButtons() {
-        waitUntilAllElementsAreVisible(By.xpath("//span[@class= 'js-add-another-card']"),10);
-        return driver.findElements(By.xpath("//span[@class= 'js-add-another-card']")).size();
+        waitUntilAllElementsAreVisible(addAnotherCardButtons, 10);
+        return addAnotherCardButtons.size();
     }
 }
